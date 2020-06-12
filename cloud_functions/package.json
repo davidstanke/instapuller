@@ -1,0 +1,19 @@
+{
+  "name": "cloud_functions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "functions-framework --target=testLocalEvents --type=event"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^1.5.0",
+    "@google-cloud/pubsub": "^0.18.0",
+    "@google-cloud/storage": "^4.7.0",
+    "node-fetch": "^2.6.0",
+    "request": "^2.81.0"
+  }
+}
