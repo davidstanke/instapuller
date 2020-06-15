@@ -6,30 +6,50 @@ _Note that storing data in Cloud SQL isn't a truly serverless data solution_
 
 ### Setup
 
-#### Set some convenience vars
-> `export PROJECT=$(gcloud config list --format 'value(core.project)')`
+#### Duplicate repo
+Before cloning this repo, copy it into your GitHub account. Click "Use this template" to make a copy. Call it "instapuller".
 
-#### Enable APIs
-> `gcloud services enable cloudbuild.googleapis.com run.googleapis.com sqladmin.googleapis.com`
+*Recommended: create a new GCP project before proceeding.*
+
+#### Set some convenience vars
+`export PROJECT=$(gcloud config list --format 'value(core.project)')`
+`export PROJECT_NUMBER=$(gcloud projects list --filter="$PROJECT" --format="value(PROJECT_NUMBER)")`
+`export GCB_SERVICE_ACCT="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"`
+`export RUN_SERVICE_ACCT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"`
+
+#### Enable APIs and grant IAM permissions
+```
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com sqladmin.googleapis.com
+gcloud projects add-iam-policy-binding $PROJECT --member=serviceAccount:$GCB_SERVICE_ACCT --role=roles/run.admin
+gcloud iam service-accounts add-iam-policy-binding $RUN_SERVICE_ACCT --member=serviceAccount:$GCB_SERVICE_ACCT --role=roles/iam.serviceAccountUser
+```
 
 #### Create CloudSQL databases
-> `export PASSWORD=$(openssl rand -base64 15)`
-> `gcloud sql instances create instapuller --zone=us-central1-c --root-password=${PASSWORD}`
-> `gcloud sql databases create instapuller-prod --instance=instapuller`
-> `gcloud sql databases create instapuller-staging --instance=instapuller`
+```
+export PASSWORD=$(openssl rand -base64 15)
+gcloud sql instances create instapuller --zone=us-central1-c --root-password=${PASSWORD}
+gcloud sql databases create instapuller-prod --instance=instapuller
+gcloud sql databases create instapuller-staging --instance=instapuller
+```
 
 #### Create initial application container
-> `docker build -t gcr.io/$PROJECT/instapull .`
-> `docker push gcr.io/$PROJECT/instapull`
+```
+docker build -t gcr.io/$PROJECT/instapull .
+docker push gcr.io/$PROJECT/instapull
+```
 
 #### Create Cloud Run services
 ```
 gcloud run deploy instapuller-prod --image=gcr.io/$PROJECT/instapull --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-prod,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
+
+gcloud run deploy instapuller-staging --image=gcr.io/$PROJECT/instapull --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-staging,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
 ```
 
-#### Run first build
-
-> `gcloud builds submit --tag gcr.io/serverless-ux-playground/instapull`
+#### Verify that Cloud Build pipelines work
+```
+gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=staging
+gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=prod
+```
 
 The deployed CR service will need all of the Environment Variables and the Cloud SQL Connection created
 

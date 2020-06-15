@@ -19,10 +19,13 @@ steps:
   # deploy container image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
   args: [
-    'run', 'deploy', 'instapull-prod', 
+    'run', 'deploy', 'instapull-${_DEPLOY_ENVIRONMENT}', 
     '--image', 'gcr.io/$PROJECT_ID/instapull', 
     '--region', 'us-west1',
     '--platform', 'managed',
     '--allow-unauthenticated',
     '--quiet'
     ]
+
+substitutions:
+  _DEPLOY_ENVIRONMENT: 'staging'
