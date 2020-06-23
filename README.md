@@ -5,9 +5,10 @@ _Note that storing data in Cloud SQL isn't a truly serverless data solution_
 ## Automated deployment
 
 ### Setup
+You'll need a GitHub.com account.
 
 #### Duplicate repo
-Before cloning this repo, copy it into your GitHub account. Click "Use this template" to make a copy. Call it "instapuller".
+Don't clone this repo directly; instead, click "Use this template" to make a copy. Call it `instapuller`.
 
 *Recommended: create a new GCP project before proceeding.*
 
