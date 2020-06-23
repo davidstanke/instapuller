@@ -21,7 +21,7 @@ steps:
   args: [
     'run', 'deploy', 'instapuller-${_DEPLOY_ENVIRONMENT}', 
     '--image', 'gcr.io/$PROJECT_ID/instapuller', 
-    '--region', 'us-west1',
+    '--region', '${_RUN_REGION}',
     '--platform', 'managed',
     '--allow-unauthenticated',
     '--quiet'
@@ -29,3 +29,4 @@ steps:
 
 substitutions:
   _DEPLOY_ENVIRONMENT: 'staging'
+  _RUN_REGION: 'us-central1'
