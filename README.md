@@ -2,15 +2,8 @@
 A Serverless (compute) approach to scraping Instagram feeds.
 _Note that storing data in Cloud SQL isn't a truly serverless data solution_
 
-## Automated deployment
-
-### Setup (should take about 5 minutes)
-You'll need a GitHub.com personal account.
-
-#### Duplicate repo
-Don't clone this repo directly; instead, click "Use this template" to make a copy. Call it `instapuller`.
-
-*Recommended: create a new GCP project before proceeding.*
+## Setup
+This should only take about 5 minutes. It's mostly a ton of copying-and-pasting shell commands. You can run it from any terminal that has gcloud and docker, but the easiest way is to **run all the following commands in cloud shell**. You'll need a GitHub.com personal account. *Recommended: create a new GCP project before proceeding. Run `gcloud init` if needed to authorize your session to the project you'll use for this application.*
 
 #### Set some convenience vars
 ```bash
@@ -19,8 +12,16 @@ export PROJECT_NUMBER=$(gcloud projects list --filter="$PROJECT" --format="value
 export GCB_SERVICE_ACCT="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
 export RUN_SERVICE_ACCT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
 ```
+
+_Replace `<your_github_username>` with your account:_
 ```bash
 export GITHUB_USER=<your_github_username>
+```
+
+#### Duplicate repo
+Don't clone this repo directly; instead, click "Use this template" to make a copy. Call it `instapuller`. Then clone your copy of the repo:
+```bash
+git clone https://github.com/${GITHUB_USER}/instapuller && cd instapuller
 ```
 
 #### Enable APIs and grant IAM permissions
@@ -49,7 +50,10 @@ docker push gcr.io/$PROJECT/instapull
 gcloud run deploy instapuller-prod --image=gcr.io/$PROJECT/instapull --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-prod,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
 
 gcloud run deploy instapuller-staging --image=gcr.io/$PROJECT/instapull --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-staging,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
+
+echo -e "======\nHere are the URLs of your Cloud Run services:\n-----\n$(gcloud run services list --platform=managed --format='value(URL)')\n====="
 ```
+_Open both URLs in a browser to verify that they work!_
 
 #### Verify that Cloud Build pipelines work
 ```bash
@@ -89,6 +93,7 @@ gcloud beta builds triggers create github \
    --substitutions="_DEPLOY_ENVIRONMENT=staging"
 ```
 
+***Test it out!*** Make a commit to `staging` and you should see your changes reflected on your staging service; merge that to `main` and you should see the changes on prod.
 
 -----------
 
