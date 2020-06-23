@@ -1,5 +1,6 @@
 # Insta-puller
-A Serverless (compute) approach to scraping Instagram feeds.
+A Serverless (compute) approach to scraping Instagram feeds. This application runs on Cloud Run and pulls images and captions from selected Instagram users. It stores these in a Cloud SQL database.
+
 _Note that storing data in Cloud SQL isn't a truly serverless data solution_
 
 ## Setup
@@ -19,7 +20,7 @@ export GITHUB_USER=<your_github_username>
 ```
 
 #### Duplicate repo
-Don't clone this repo directly; instead, click "Use this template" to make a copy. Call it `instapuller`. Then clone your copy of the repo:
+**Don't clone this repo** directly; instead, click "Use this template" to make a copy. Call it `instapuller`. Then clone your copy of the repo:
 ```bash
 git clone https://github.com/${GITHUB_USER}/instapuller && cd instapuller
 ```
@@ -61,8 +62,9 @@ _Open both URLs in a browser to verify that they work!_
 gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=staging
 gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=prod
 ```
+_Then revisit the application URLs. They should look unchanged._
 
-### Connect your repo
+### Connect your GitHub repo
 _For this, you'll use the Cloud Build Triggers page in the GCP console._
 
 See the docs for [Connecting to source repositories](https://cloud.google.com/cloud-build/docs/automating-builds/create-manage-triggers#connect_repo)
@@ -94,7 +96,7 @@ gcloud beta builds triggers create github \
    --substitutions="_DEPLOY_ENVIRONMENT=staging"
 ```
 
-***Test it out!*** Make a commit to `staging` and you should see your changes reflected on your staging service; merge that to `main` and you should see the changes on prod.
+***Test it out!*** Make a commit to branch `staging` and push to GitHub; you should see your changes reflected on your staging service. Merge that branch to `main` and you should see the changes on prod.
 
 -----------
 
