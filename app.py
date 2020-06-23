@@ -61,7 +61,7 @@ metadata.create_all(config.db)
 def processPosts():
     username = request.args.get('username')
     if (username == None):
-        username = 'danaherjohn'
+        username = 'googlecloud'
     page = requests.get(URL + username)
     if (page.status_code == 200):
         soup = BeautifulSoup(page.content, 'html.parser')
