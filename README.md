@@ -22,9 +22,6 @@ export RUN_SERVICE_ACCT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com
 ```bash
 export GITHUB_USER=<your_github_username>
 ```
-```bash
-export GITHUB_EMAIL=<your_github_email>
-```
 
 #### Enable APIs and grant IAM permissions
 ```bash
@@ -79,9 +76,18 @@ gcloud beta builds triggers create github \
    --build-config="cloudbuild.yaml" \
    --description="On commit to branch: main, deploy to prod service" \
    --substitutions="_DEPLOY_ENVIRONMENT=prod"
-
 ```
 
+#### On commit to `staging`, deploy to staging:
+```bash
+gcloud beta builds triggers create github \
+   --repo-name=instapuller \
+   --repo-owner=${GITHUB_USER} \
+   --branch-pattern="^staging$" \
+   --build-config="cloudbuild.yaml" \
+   --description="On commit to branch: staging, deploy to staging service" \
+   --substitutions="_DEPLOY_ENVIRONMENT=staging"
+```
 
 
 -----------
