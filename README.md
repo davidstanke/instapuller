@@ -41,19 +41,20 @@ gcloud sql databases create instapuller-staging --instance=instapuller
 
 #### Create initial application container
 ```bash
-docker build -t gcr.io/$PROJECT/instapull .
-docker push gcr.io/$PROJECT/instapull
+docker build -t gcr.io/$PROJECT/instapuller .
+docker push gcr.io/$PROJECT/instapuller
 ```
 
 #### Create Cloud Run services
 ```bash
-gcloud run deploy instapuller-prod --image=gcr.io/$PROJECT/instapull --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-prod,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
+gcloud run deploy instapuller-prod --image=gcr.io/$PROJECT/instapuller --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-prod,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
 
-gcloud run deploy instapuller-staging --image=gcr.io/$PROJECT/instapull --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-staging,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
+gcloud run deploy instapuller-staging --image=gcr.io/$PROJECT/instapuller --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-staging,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
 
 echo -e "======\nHere are the URLs of your Cloud Run services:\n-----\n$(gcloud run services list --platform=managed --format='value(URL)')\n====="
 ```
 _Open both URLs in a browser to verify that they work!_
+> NOTE: the first load may be slow b/c the application will create the database on first request.
 
 #### Verify that Cloud Build pipelines work
 ```bash
