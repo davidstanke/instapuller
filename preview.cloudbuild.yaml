@@ -30,14 +30,14 @@ steps:
     ]
 
 # add preview URL as a comment on Pull Request    
-- name: bash
-  args:
-    - '-c' # execute the following in a bash shell
-    - |-
-      /bin/pr_comment_post.sh \
-      $_GH_USERNAME/instapuller \
-      $_PR_NUMBER \
-      "Preview this revision: FOO"
+- name: gcr.io/cloud-builders/curl
+  entrypoint: bash
+  args: [
+    'tools/pr_comment_post.sh',
+    '$_GH_USERNAME/instapuller',
+    '$_PR_NUMBER',
+    'Preview this revision: https://preview-${SHORT_SHA}---${_PREVIEW_BASE_URL}'
+  ]
   secretEnv:
     - GITHUB_TOKEN
     
@@ -46,6 +46,6 @@ substitutions:
   _GH_USERNAME: 'davidstanke'
 
 secrets:
-  - kmsKeyName: projects/$PROJECT_ID/locations/global/keyRings/instapuller/cryptoKeys/github-token
+  - kmsKeyName: projects/instapuller-4/locations/global/keyRings/instapuller/cryptoKeys/github-token
     secretEnv: 
-      GITHUB_TOKEN: $_GITHUB_TOKEN
+      GITHUB_TOKEN: CiQAlzDQXVGMFrbYSxMJI8650URnmJ8CgYimkpyH1OWrGxZER1USUQBLxqCxOOGxuyE60BZqJCAM18TGN9jWrTplIsQEnQ+z01DPdjeSWwq90EtePnt3hOe2sn6dBcGBgmq9XitYCsDPYPsKM3DjeDX56zWxCwcdbQ==
