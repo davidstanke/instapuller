@@ -46,6 +46,6 @@ substitutions:
   _GH_USERNAME: 'davidstanke'
 
 secrets:
-  - kmsKeyName: projects/$PROJECT_ID/locations/global/keyRings/instapuller/cryptoKeys/github-token
+  - kmsKeyName: projects/instapuller-4/locations/global/keyRings/instapuller/cryptoKeys/github-token
     secretEnv: 
       GITHUB_TOKEN: CiQAlzDQXVGMFrbYSxMJI8650URnmJ8CgYimkpyH1OWrGxZER1USUQBLxqCxOOGxuyE60BZqJCAM18TGN9jWrTplIsQEnQ+z01DPdjeSWwq90EtePnt3hOe2sn6dBcGBgmq9XitYCsDPYPsKM3DjeDX56zWxCwcdbQ==
