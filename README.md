@@ -1,7 +1,7 @@
 # Insta-puller
 A Serverless (compute) approach to scraping Instagram feeds. This application runs on Cloud Run and pulls images and captions from selected Instagram users. It stores these in a Cloud SQL database.
 
-_Note that storing data in Cloud SQL isn't a truly serverless data solution_
+_Note that storing data in Cloud SQL isn't a truly serverless data solution._
 
 ## Setup
 
