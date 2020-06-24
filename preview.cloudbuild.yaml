@@ -19,14 +19,33 @@ steps:
   # deploy container image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
   args: [
-    'run', 'deploy', 'instapuller-${_DEPLOY_ENVIRONMENT}', 
+    'alpha', 'run', 'deploy', 'instapuller-preview', 
     '--image', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA', 
     '--region', '${_RUN_REGION}',
     '--platform', 'managed',
     '--allow-unauthenticated',
+    '--tag=preview-$SHORT_SHA',
+    '--no-traffic',
     '--quiet'
     ]
 
+  # add preview URL as a comment on Pull Request    
+  - name: bash
+    args:
+      - '-c' # execute the following in a bash shell
+      - |-
+        /bin/pr_comment_post.sh \
+        $_GH_USERNAME/instapuller \
+        $_PR_NUMBER \
+        "Preview this revision: FOO"
+    secretEnv:
+      - GITHUB_TOKEN
+    
 substitutions:
-  _DEPLOY_ENVIRONMENT: 'staging'
   _RUN_REGION: 'us-central1'
+  _GH_USERNAME: 'davidstanke'
+
+secrets:
+  - kmsKeyName: projects/$PROJECT_ID/locations/global/keyRings/instapuller/cryptoKeys/github-token
+    secretEnv: 
+      GITHUB_TOKEN: $_GITHUB_TOKEN

@@ -60,7 +60,7 @@ echo -e "======\nHere are the URLs of your Cloud Run services:\n-----\n$(gcloud 
 _Open both URLs in a browser to verify that they work!_
 > NOTE: the first load may be slow b/c the application will create the database on first request.
 
-#### Verify that Cloud Build pipelines work
+#### OPTIONAL: Verify that Cloud Build pipelines work
 ```bash
 gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=staging
 gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=prod
@@ -84,7 +84,7 @@ gcloud beta builds triggers create github \
    --repo-owner=${GITHUB_USER} \
    --branch-pattern="^main$" \
    --build-config="cloudbuild.yaml" \
-   --description="On commit to branch: main, deploy to prod service" \
+   --description="On commit to main, deploy to prod service" \
    --substitutions="_DEPLOY_ENVIRONMENT=prod"
 ```
 
@@ -95,11 +95,13 @@ gcloud beta builds triggers create github \
    --repo-owner=${GITHUB_USER} \
    --branch-pattern="^staging$" \
    --build-config="cloudbuild.yaml" \
-   --description="On commit to branch: staging, deploy to staging service" \
+   --description="On commit to staging, deploy to staging service" \
    --substitutions="_DEPLOY_ENVIRONMENT=staging"
 ```
 
 ***Test it out!*** Make a commit to branch `staging` and push to GitHub; you should see your changes reflected on your staging service. Merge that branch to `main` and you should see the changes on prod.
+
+_Bonus:_ [configure preview environments for each pull request](docs/pr-previews.md)
 
 -----------
 
