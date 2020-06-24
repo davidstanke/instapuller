@@ -24,6 +24,8 @@ Do the following, then whenever there's a pull request against branch `staging`,
   ```
   export ENCRYPTED_TOKEN=`echo -n $GITHUB_TOKEN | gcloud kms encrypt --plaintext-file=- --ciphertext-file=- --location=global --keyring=instapuller --key=github-token | base64 -w 0`
   ```
+3. Patch the encrypted token into `preview.cloudbuild.yaml`
+> TODO: get rid of this janky patching step. Secret Manager FTW?
 
 #### Run these commands:
 
@@ -33,7 +35,7 @@ gcloud sql databases create instapuller-preview --instance=instapuller
 gcloud run deploy instapuller-preview --image=gcr.io/$PROJECT/instapuller --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-preview,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
 
 # get base URL of preview service
-export PREVIEW_BASE_URL=$(gcloud run services list --platform=managed --filter="SERVICE:instapuller-staging" --format='value(URL)' | sed 's/https:\/\///g')
+export PREVIEW_BASE_URL=$(gcloud run services list --platform=managed --filter="SERVICE:instapuller-preview" --format='value(URL)' | sed 's/https:\/\///g')
 
 gcloud beta builds triggers create github \
    --repo-name=instapuller \
@@ -41,5 +43,5 @@ gcloud beta builds triggers create github \
    --pull-request-pattern="^staging$" \
    --build-config="preview.cloudbuild.yaml" \
    --description="For each PR against staging, deploy a preview environment" \
-   --substitutions="_PREVIEW_BASE_URL=${PREVIEW_BASE_URL},_GH_TOKEN=${ENCRYPTED_TOKEN},_GH_USERNAME=${GITHUB_USER}"
+   --substitutions="_PREVIEW_BASE_URL=${PREVIEW_BASE_URL},_GH_USERNAME=${GITHUB_USER}"
 ```
