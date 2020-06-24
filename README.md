@@ -62,8 +62,8 @@ _Open both URLs in a browser to verify that they work!_
 
 #### OPTIONAL: Verify that Cloud Build pipelines work
 ```bash
-gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=staging
-gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=prod
+gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=staging,SHORT_SHA=$(date +%Y%m%d_%H%M%S)
+gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=prod,SHORT_SHA=$(date +%Y%m%d_%H%M%S)
 ```
 _Then revisit the application URLs. They should look unchanged._
 

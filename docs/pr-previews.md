@@ -24,7 +24,7 @@ Do the following, then whenever there's a pull request against branch `staging`,
   ```
   export ENCRYPTED_TOKEN=`echo -n $GITHUB_TOKEN | gcloud kms encrypt --plaintext-file=- --ciphertext-file=- --location=global --keyring=instapuller --key=github-token | base64 -w 0`
   ```
-3. Patch the encrypted token into `preview.cloudbuild.yaml`
+3. Patch the encrypted token and the project name into the secrets section of `preview.cloudbuild.yaml`
 > TODO: get rid of this janky patching step. Secret Manager FTW?
 
 #### Run these commands:
