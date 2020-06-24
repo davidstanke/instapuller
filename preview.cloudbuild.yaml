@@ -30,7 +30,7 @@ steps:
     ]
 
 # add preview URL as a comment on Pull Request    
-- name: curl
+- name: gcr.io/cloud-builders/curl
   entrypoint: bash
   args: [
     'tools/pr_comment_post.sh',
