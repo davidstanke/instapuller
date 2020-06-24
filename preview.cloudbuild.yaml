@@ -36,7 +36,7 @@ steps:
     'tools/pr_comment_post.sh',
     '$_GH_USERNAME/instapuller',
     '$_PR_NUMBER',
-    'Preview this revision: FOO'
+    'Preview this revision: https://preview-${SHORT_SHA}---${PREVIEW_BASE_URL}'
   ]
   secretEnv:
     - GITHUB_TOKEN
