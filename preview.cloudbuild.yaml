@@ -30,7 +30,8 @@ steps:
     ]
 
 # add preview URL as a comment on Pull Request    
-- name: bash
+- name: curl
+  entrypoint: bash
   args: [
     'tools/pr_comment_post.sh',
     '$_GH_USERNAME/instapuller',
