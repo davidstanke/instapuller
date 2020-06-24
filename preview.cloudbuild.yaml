@@ -32,10 +32,10 @@ steps:
 # add preview URL as a comment on Pull Request    
 - name: bash
   args: [
-    '/tools/pr_comment_post.sh',
+    'tools/pr_comment_post.sh',
     '$_GH_USERNAME/instapuller',
     '$_PR_NUMBER',
-    'Preview this revision: FOO'
+    '"Preview this revision: FOO"'
   ]
   secretEnv:
     - GITHUB_TOKEN
