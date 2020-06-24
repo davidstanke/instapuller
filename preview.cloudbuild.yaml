@@ -48,4 +48,4 @@ substitutions:
 secrets:
   - kmsKeyName: projects/$PROJECT_ID/locations/global/keyRings/instapuller/cryptoKeys/github-token
     secretEnv: 
-      GITHUB_TOKEN: $_GITHUB_TOKEN
+      GITHUB_TOKEN: CiQAlzDQXVGMFrbYSxMJI8650URnmJ8CgYimkpyH1OWrGxZER1USUQBLxqCxOOGxuyE60BZqJCAM18TGN9jWrTplIsQEnQ+z01DPdjeSWwq90EtePnt3hOe2sn6dBcGBgmq9XitYCsDPYPsKM3DjeDX56zWxCwcdbQ==
