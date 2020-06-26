@@ -43,7 +43,6 @@ steps:
     ./tools/pr_comment_post.sh ${_GH_USERNAME}/instapuller ${_PR_NUMBER} \
     Preview this revision: https://preview-${SHORT_SHA}---${_PREVIEW_BASE_URL} \
     $(gcloud secrets versions access latest --secret=github_token)
-  ]
 
 substitutions:
   _RUN_REGION: 'us-central1'
