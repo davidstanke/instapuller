@@ -36,8 +36,9 @@ steps:
 - name: gcr.io/cloud-builders/gcloud
   entrypoint: bash
   args: 
-    - '-euEo pipefail'
-    - '-c'   
+    - '-eEuo'
+    - 'pipefail'
+    - '-c'
     - |-
       PREVIEW_BASE_URL=$(gcloud run services list --platform=managed --filter="SERVICE:instapuller-preview" --format='value(URL)' | sed 's/https:\/\///g') && \
       ./tools/pr_comment_post.sh ${_GH_USERNAME}/instapuller ${_PR_NUMBER} \
