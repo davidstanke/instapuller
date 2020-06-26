@@ -36,6 +36,7 @@ steps:
 - name: gcr.io/cloud-builders/gcloud
   entrypoint: bash
   args: 
+    - '-set eEo pipefail'
     - '-c'
     - |-
       env
