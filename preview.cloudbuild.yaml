@@ -41,7 +41,7 @@ steps:
     - |-
     PREVIEW_BASE_URL=$(gcloud run services list --platform=managed --filter="SERVICE:instapuller-preview" --format='value(URL)' | sed 's/https:\/\///g') && \
     ./tools/pr_comment_post.sh ${_GH_USERNAME}/instapuller ${_PR_NUMBER} \
-    Preview this revision: https://preview-${SHORT_SHA}---${_PREVIEW_BASE_URL} \
+    "Preview this revision: https://preview-${SHORT_SHA}---${_PREVIEW_BASE_URL}" \
     $(gcloud secrets versions access latest --secret=github_token)
 
 substitutions:
