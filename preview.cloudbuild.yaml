@@ -37,7 +37,7 @@ steps:
   entrypoint: bash
   args: 
     - '-set eEo pipefail'
-    - '-c'   
+    - '-c'
     - |-
       PREVIEW_BASE_URL=$(gcloud run services list --platform=managed --filter="SERVICE:instapuller-preview" --format='value(URL)' | sed 's/https:\/\///g')
 
