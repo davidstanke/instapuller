@@ -1,22 +1,16 @@
 #!/usr/bin/env bash
 set -eEou pipefail
 
-# expected environment var:
-# $GITHUB_TOKEN
-
-if [ -z "$GITHUB_TOKEN" ]; then
-    echo "Env var GITHUB_TOKEN is required for pr_comment_post.sh. Exiting."
-    exit 1
-fi
-
 # parameters:
 # $1: the repo (as org/repo) containing the PR
 # $2: the number of the PR to post to
-# $3: the GitHub access token for an account with PR comment permissions
+# $3: the text to post to the PR
+# $4: the GitHub access token for an account with PR comment permissions
 
 REPO=$1
 PR_NUMBER=$2
 COMMENT=$3
+GITHUB_TOKEN=$4
 
 PAYLOAD="{\"body\":\"$COMMENT\"}"
 PR_URL="https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments"
