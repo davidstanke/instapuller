@@ -11,36 +11,35 @@ steps:
 #   args: ["python", "tests/main.py"]
 #   env: ["PYTHONPATH=/workspace/lib"]
 
-#   # build the container image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA', '.']
+# #   # build the container image
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['build', '-t', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA', '.']
   
-  # push the container image to Container Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA']
+#   # push the container image to Container Registry
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['push', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA']
   
-  # deploy container image to Cloud Run
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: [
-    'alpha', 'run', 'deploy', 'instapuller-preview', 
-    '--image', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA', 
-    '--region', '${_RUN_REGION}',
-    '--platform', 'managed',
-    '--allow-unauthenticated',
-    '--tag=preview-$SHORT_SHA',
-    '--no-traffic',
-    '--quiet'
-    ]
+#   # deploy container image to Cloud Run
+# - name: 'gcr.io/cloud-builders/gcloud'
+#   args: [
+#     'alpha', 'run', 'deploy', 'instapuller-preview', 
+#     '--image', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA', 
+#     '--region', '${_RUN_REGION}',
+#     '--platform', 'managed',
+#     '--allow-unauthenticated',
+#     '--tag=preview-$SHORT_SHA',
+#     '--no-traffic',
+#     '--quiet'
+#     ]
 
 # add preview URL as a comment on Pull Request    
 - name: gcr.io/cloud-builders/gcloud
   entrypoint: bash
   args: 
-    - '-set eEo pipefail'
     - '-c'
     - |-
       env
 
-substitutions:
-  _RUN_REGION: 'us-central1'
-  _GH_USERNAME: 'davidstanke'
+# substitutions:
+#   _RUN_REGION: 'us-central1'
+#   _GH_USERNAME: 'davidstanke'
