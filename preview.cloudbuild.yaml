@@ -39,7 +39,7 @@ steps:
     - '-set eEo pipefail'
     - '-c'
     - |-
-      PREVIEW_BASE_URL=$(gcloud run services list --platform=managed --filter="SERVICE:instapuller-preview" --format='value(URL)' | sed 's/https:\/\///g')
+      env
 
 substitutions:
   _RUN_REGION: 'us-central1'
