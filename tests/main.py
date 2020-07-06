@@ -4,11 +4,15 @@ import requests
 import json
 import unittest
 
+# url_one = 'https://www.instagram.com/googlecloud/'
+# url_two = 'https://www.instagram.com/joshbloom/'
+# url_three = 'https://www.instagram.com/explore/tags/googlecloud/'
 
 # def processPosts(url):
 #     page = requests.get(url)
 #     soup = BeautifulSoup(page.content, 'html.parser')
 #     scripts = soup.find_all('script')
+#     print(scripts)
 
 #     try:
 #         data = scripts[4].getText()[21:-1]  # Clean out pre-amble
@@ -40,12 +44,7 @@ import unittest
 #     return postCollection
 
 
-# url_one = 'https://www.instagram.com/joshbloom/'
-# url_two = 'https://www.instagram.com/danaherjohn/'
-# url_three = 'https://www.instagram.com/explore/tags/ribeirojiujitsu/'
-
-
-class TestSum(unittest.TestCase):
+class TestInstaPuller(unittest.TestCase):
 
     def test_sum(self):
         self.assertEqual(sum([1, 2, 3]), 6, "Should be 6")

@@ -2,24 +2,24 @@
 # To set it up, see `docs/pr-previews.md`
 
 steps:
-  # install Test requirements
-# - name: "docker.io/library/python:3.8"
-#   args: ['pip', 'install', '-t', '/workspace/lib', '-r', 'requirements.txt']
+# install Test requirements
+- name: "docker.io/library/python:3.8"
+  args: ['pip', 'install', '-t', '/workspace/lib', '-r', 'requirements.txt']
 
 # TODO: Make tests work again
-# - name: 'docker.io/library/python:3.8'
-#   args: ["python", "tests/main.py"]
-#   env: ["PYTHONPATH=/workspace/lib"]
+- name: 'docker.io/library/python:3.8'
+  args: ["python", "tests/main.py"]
+  env: ["PYTHONPATH=/workspace/lib"]
 
-#   # build the container image
+# build the container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA', '.']
   
-  # push the container image to Container Registry
+# push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/instapuller:$SHORT_SHA']
   
-  # deploy container image to Cloud Run
+# deploy container image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
   args: [
     'alpha', 'run', 'deploy', 'instapuller-preview', 
