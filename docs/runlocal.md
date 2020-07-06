@@ -1,13 +1,9 @@
 ## Running Locally
 ### Setup Instructions (for working in Cloud Shell)
 
-1. Clone (inside Cloud Shell)
-   > `gcloud source repos clone insta-puller --project=serverless-ux-playground`
-2. move into the new directory
-   > `cd insta-puller`
-3. Create and enable virtual environment
+1. Create and enable virtual environment
    > `python3 -m venv .env; source .env/bin/activate`
-4. Install python requirements
+2. Install python requirements
    > `pip3 install -r requirements.txt`
 
 ### Setup Cloud SQL Proxy (do this in a separate terminal)
