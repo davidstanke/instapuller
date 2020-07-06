@@ -79,7 +79,7 @@ def processPosts():
 
         return render_template('index.html', data=collection)
     else:
-        return "Problem retrieving results"
+        return "Problem retrieving results: " + str(page.status_code)
 
 
 def dispatchMediaDownloadRequest(post):
