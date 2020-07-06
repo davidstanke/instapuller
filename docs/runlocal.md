@@ -6,6 +6,9 @@
 2. Install python requirements
    > `pip3 install -r requirements.txt`
 
+### Testing locally
+> `PYTHONPATH=./env/lib python3 tests/main.py`
+
 ### Setup Cloud SQL Proxy (do this in a separate terminal)
 
 1. Download Cloud Sql Proxy
