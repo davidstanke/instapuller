@@ -22,7 +22,7 @@ from pymysql.err import IntegrityError
 app = Flask(__name__)
 
 logger = logging.getLogger()
-URL = 'https://imginn.com/'
+URL = 'http://imginn.com/'
 
 project_id = "serverless-ux-playground"
 topic_name = "instapuller-media-download-request"
