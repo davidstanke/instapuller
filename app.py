@@ -62,7 +62,8 @@ def processPosts():
     username = request.args.get('username')
     if (username == None):
         username = 'googlecloud'
-    page = requests.get(URL + username)
+    headers = {'user-agent': 'my-app/0.0.1'}
+    page = requests.get(URL + username, headers=headers)
     if (page.status_code == 200):
         soup = BeautifulSoup(page.content, 'html.parser')
         items = soup.find_all('div', class_='item')
