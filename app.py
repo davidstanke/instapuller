@@ -1,9 +1,3 @@
-try:
-    import googleclouddebugger
-    googleclouddebugger.enable()
-except ImportError:
-    pass
-
 import config
 import json
 import logging
@@ -24,11 +18,10 @@ app = Flask(__name__)
 logger = logging.getLogger()
 URL = 'http://imginn.com/'
 
-project_id = "serverless-ux-playground"
-topic_name = "instapuller-media-download-request"
-
-publisher = pubsub_v1.PublisherClient()
-topic_path = publisher.topic_path(project_id, topic_name)
+# project_id = "serverless-ux-playground"
+# topic_name = "instapuller-media-download-request"
+# publisher = pubsub_v1.PublisherClient()
+# topic_path = publisher.topic_path(project_id, topic_name)
 
 futures = dict()  # What was this about?
 
