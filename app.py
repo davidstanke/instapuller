@@ -15,7 +15,7 @@ import time
 from bs4 import BeautifulSoup
 from flask import Flask, request, render_template
 from google.cloud import pubsub_v1
-from sqlalchemy import exc, Table, Column, Integer, String, MetaData, ForeignKey, Sequence, BigInteger, DATETIME, func
+from sqlalchemy import create_engine, exc, Table, Column, Integer, String, MetaData, ForeignKey, Sequence, BigInteger, DATETIME, func
 from pymysql.err import IntegrityError
 
 # Setup Flask Web App
