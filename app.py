@@ -49,8 +49,16 @@ media = Table('media', metadata,
 
 metadata.create_all(config.db)
 
-
 @app.route('/')
+def displayPosts():
+    with config.db.connect() as conn:
+        posts = conn.execute('''
+            select *
+            from posts
+            order by date_added DESC;''')
+        return render_template('index.html', data=posts)
+
+@app.route('/addUser')
 def processPosts():
     username = request.args.get('username')
     if (username == None):
@@ -71,20 +79,23 @@ def processPosts():
                 except exc.IntegrityError as err:
                     print(err.orig)
 
-        return render_template('index.html', data=collection)
+        return_string = (
+            "added Instgram user: " + username 
+            + " (" + str(len(collection)) + " items)"
+            + "<br><br><a href='/'>home</a>")
     else:
         return_string = (
             "Problem retrieving results: "
             + URL + username + " returns "
             + str(page.status_code) + " " + str(page.reason))
-        return return_string
+    return return_string
 
 
 def dispatchMediaDownloadRequest(post):
     # Dispatch media request to pubsub topic
     # data must be a bytestring.
     logger.info("Dispatch request to pubsub: %s", post)
-    publisher.publish(topic_path, data=(json.dumps(post)).encode("utf-8"))
+    # publisher.publish(topic_path, data=(json.dumps(post)).encode("utf-8"))
 
 
 def convertShortCodeToPostID(shortcode):
