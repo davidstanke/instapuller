@@ -1,5 +1,7 @@
 import os
 import sqlalchemy
+
+from os import path
 from sqlalchemy import create_engine
 from shutil import copyfile
 
@@ -7,10 +9,9 @@ db_type = os.environ.get("DB_TYPE") or "mysql"
 
 if (db_type=="sqlite3"): # for testing; use a local sqlite3 file as DB
     
-    db_file = os.environ.get("DB_FILE") or "NEW"
-    
-    if (db_file=="NEW"): # copy from the template to a new db
-        db_file="instapuller.db"
+    db_file="instapuller.db"
+
+    if (not path.exists(db_file)): # copy from the template to a new db
         copyfile("misc/instapuller-template.db",db_file)
             
     db = create_engine("sqlite:///"+db_file, echo=True)

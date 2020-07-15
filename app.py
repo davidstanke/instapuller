@@ -159,5 +159,7 @@ def purge_all():
     return redirect(url_for('displayPosts'))
     
 if __name__ == "__main__":
+
+    # create initial database tables (if not already present)
     metadata.create_all(config.db)
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
