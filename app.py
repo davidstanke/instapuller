@@ -25,6 +25,9 @@ logger = logging.getLogger()
 
 URL = 'http://imginn.com/'
 
+# make a session factory
+Session = sessionmaker(bind=config.db)
+
 # project_id = "serverless-ux-playground"
 # topic_name = "instapuller-media-download-request"
 # publisher = pubsub_v1.PublisherClient()
@@ -39,7 +42,7 @@ def displayPosts():
 @app.route('/addUser')
 def processPosts():
     username = request.args.get('username')
-    
+
     if (username == None):
         return_string = "dude, you gotta provide a username"
     else:
@@ -147,8 +150,5 @@ if __name__ == "__main__":
 
     # create initial database tables (if not already present)
     Base.metadata.create_all(config.db)
-
-    # make a session factory
-    Session = sessionmaker(bind=config.db)
 
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
