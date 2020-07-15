@@ -78,7 +78,7 @@ _Then revisit the application URLs. They should look unchanged._
 ### Connect your GitHub repo
 _For this, you'll use the [Cloud Build Triggers page](https://console.cloud.google.com/cloud-build/triggers) in the GCP console._
 
-See the docs for [Connecting to source repositories](https://cloud.google.com/cloud-build/docs/automating-builds/create-manage-triggers#connect_repo)
+> See the docs for [Connecting to source repositories](https://cloud.google.com/cloud-build/docs/automating-builds/create-manage-triggers#connect_repo)
 
 1. Use the "Cloud Build GitHub App" option and grant access if asked to do so.
 1. Select your copy of the `instapuller` repo
