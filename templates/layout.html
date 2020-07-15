@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Google+Sans:100,300,400,500,700,900,100i,300i,400i,500i,700i,900i&amp;display=swap" rel="stylesheet">
+
+	<title>Insta-puller: A puller of Insta</title>
+	<style>
+		body {
+			font-family:"Google Sans", sans-serif;
+			background-color: white;
+            max-width:1024px;
+            margin:auto;
+		}
+
+		.tableHolder {
+			margin: 35px;
+		}
+
+		td img {
+			height: 100px;
+		}
+
+		th {
+            background-color:#666;
+            color:white;
+        }
+
+		header {
+			padding:1rem;
+		}
+
+		header a.title {
+			font-size:2rem;
+			font-weight:bold;
+		}
+
+        header.topbar {
+            height:4rem;
+            vertical-align: middle;
+        }
+
+        header.messages {
+            background-color: #90ee90;
+        }
+
+	</style>
+</head>
+
+<body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <header class="topbar messages">
+        {% for message in messages %}
+        <div>{{ message }}</div>
+        {% endfor %}
+        </header>
+    {% else %}
+        <header class="topbar">
+        </header>
+    {% endif %}
+    {% endwith %}
+	<header>
+		<a href="/" class="title">Instapuller</a> is an application that displays instagram posts from <a href="/usernames">selected users</a>.<br>
+		<form action="/addUser" method="GET">
+			<input type="text" name="username" placeholder="add an instagrammer" required><input type="submit" value="go">
+		</form>
+	</header>
+	<div class=tableHolder>
+		{% block content %}{% endblock %}
+	</div>
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+	</script>
+</body>
+
+</html>

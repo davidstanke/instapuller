@@ -7,13 +7,14 @@ import sqlalchemy
 import random
 import time
 from bs4 import BeautifulSoup
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, flash, redirect, url_for
 from google.cloud import pubsub_v1
 from sqlalchemy import create_engine, exc, Table, Column, Integer, String, MetaData, ForeignKey, Sequence, BigInteger, DATETIME, func
 from pymysql.err import IntegrityError
 
 # Setup Flask Web App
 app = Flask(__name__)
+app.secret_key = "replace_this_if_you_care"
 
 logger = logging.getLogger()
 URL = 'http://imginn.com/'
@@ -47,6 +48,9 @@ media = Table('media', metadata,
                      server_default=func.now()),
               mysql_charset='utf8mb4')
 
+# NOTE: the following command doesn't work for sqlite. not sure why.
+# So, the database file ('misc/instapuller-local.db') has the tables already
+# in place.
 metadata.create_all(config.db)
 
 @app.route('/')
@@ -81,14 +85,14 @@ def processPosts():
 
         return_string = (
             "added Instgram user: " + username 
-            + " (" + str(len(collection)) + " items)"
-            + "<br><br><a href='/'>home</a>")
+            + " (" + str(len(collection)) + " items)")
     else:
         return_string = (
             "Problem retrieving results: "
             + URL + username + " returns "
             + str(page.status_code) + " " + str(page.reason))
-    return return_string
+    flash(return_string)
+    return redirect(url_for('displayPosts'))
 
 
 def dispatchMediaDownloadRequest(post):
@@ -132,11 +136,11 @@ def showStats():
                 GROUP BY username
                 ORDER by count(username) desc;''')
 
-    tableRows = []
-    for row in result:
-        tableRows.append((row[0], row[1]))
+        tableRows = []
+        for row in result:
+            tableRows.append((row[0], row[1]))
 
-    return render_template('stats.html', rows=tableRows)
+        return render_template('stats.html', rows=tableRows)
 
 
 @app.route('/usernames')
@@ -146,11 +150,18 @@ def get_usernames():
             select username from posts
                 group by username
                 order by username;''')
-    users = []
-    for row in result:
-        users.append(row[0])
-    return json.dumps(users)
+        users = []
+        for row in result:
+            users.append(row[0])
+        return json.dumps(users)
 
-
+@app.route('/purgeall')
+def purge_all():
+    with config.db.connect() as conn:
+        conn.execute('delete from posts;')
+        conn.execute('delete from media;')
+    flash('all gone.')
+    return redirect(url_for('displayPosts'))
+    
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
