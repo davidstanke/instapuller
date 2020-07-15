@@ -48,11 +48,6 @@ media = Table('media', metadata,
                      server_default=func.now()),
               mysql_charset='utf8mb4')
 
-# NOTE: the following command doesn't work for sqlite. not sure why.
-# So, the database file ('misc/instapuller-local.db') has the tables already
-# in place.
-metadata.create_all(config.db)
-
 @app.route('/')
 def displayPosts():
     with config.db.connect() as conn:
@@ -164,4 +159,5 @@ def purge_all():
     return redirect(url_for('displayPosts'))
     
 if __name__ == "__main__":
+    metadata.create_all(config.db)
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
