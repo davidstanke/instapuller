@@ -76,7 +76,7 @@ gcloud builds submit --substitutions=_DEPLOY_ENVIRONMENT=prod,SHORT_SHA=$(date +
 _Then revisit the application URLs. They should look unchanged._
 
 ### Connect your GitHub repo
-_For this, you'll use the Cloud Build Triggers page in the GCP console._
+_For this, you'll use the [Cloud Build Triggers page](https://console.cloud.google.com/cloud-build/triggers) in the GCP console._
 
 See the docs for [Connecting to source repositories](https://cloud.google.com/cloud-build/docs/automating-builds/create-manage-triggers#connect_repo)
 
