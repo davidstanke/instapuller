@@ -9,25 +9,28 @@ _Note that storing data in Cloud SQL isn't a truly serverless data solution._
 
 You can run these steps from any terminal that has gcloud and docker, but the easiest way is to **run all the following commands in cloud shell**. You'll need a GitHub.com personal account. *Recommended: create a new GCP project before proceeding.*
 
-#### Set some convenience vars
-```bash
-export PROJECT=$(gcloud config list --format 'value(core.project)')
-export PROJECT_NUMBER=$(gcloud projects list --filter="$PROJECT" --format="value(PROJECT_NUMBER)")
-export GCB_SERVICE_ACCT="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
-export RUN_SERVICE_ACCT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
-
-```
-
-_Replace `<your_github_username>` with your account:_
+#### Prep
+_Replace `<your_github_username>` with your account (e.g. `davidstanke`):_
 ```bash
 export GITHUB_USER=<your_github_username>
 
 ```
 
 #### Duplicate repo
-**Don't clone this repo** directly; instead, click "Use this template" to make a copy (or [click here](https://github.com/davidstanke/instapuller/generate)). Call it `instapuller`, and *check the box to 'include all branches.'* Then clone your copy of the repo:
+**Don't clone this repo** directly; instead, click "Use this template" to make a copy (or [click here](https://github.com/davidstanke/instapuller/generate)). Call it `instapuller`. Then clone your copy of the repo, and add a "staging" branch:
 ```bash
 git clone https://github.com/${GITHUB_USER}/instapuller && cd instapuller
+git checkout -b staging
+git push -u origin staging
+
+```
+
+#### Set some convenience vars
+```bash
+export PROJECT=$(gcloud config list --format 'value(core.project)')
+export PROJECT_NUMBER=$(gcloud projects list --filter="$PROJECT" --format="value(PROJECT_NUMBER)")
+export GCB_SERVICE_ACCT="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
+export RUN_SERVICE_ACCT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
 
 ```
 
