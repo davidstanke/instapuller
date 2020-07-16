@@ -11,6 +11,33 @@
 ### Testing locally
 > `PYTHONPATH=./env/lib python3 tests/main.py`
 
+### Testing locally against a cloud DB
+
+#### Setup Cloud SQL Proxy (do this in a separate terminal)
+
+1. Download Cloud Sql Proxy
+   > `wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy`
+2. Make it executable
+   > `chmod +x cloud_sql_proxy`
+3. Create a root cloudsql dir
+   > `sudo mkdir /cloudsql`
+4. Start the Cloud SQL Proxy
+   > `sudo ./cloud_sql_proxy -dir=/cloudsql -instances=serverless-ux-playground:us-central1:instapuller`
+
+#### Run the Python app locally (different terminal from the SQL Proxy)
+
+1. Setup the Env variables that let us connect to our Cloud SQL DB
+   > `export DB_USER='root'; export DB_PASS=$DB_PASS ; export DB_NAME='instapuller-staging' ; export CLOUD_SQL_CONNECTION_NAME='serverless-ux-playground:us-central1:instapuller'`
+2. Make sure you're in the insta-puller directory
+   > `cd repos/instapuller/`
+3. Enable the virtual environment
+   > `source .env/bin/activate`
+4. Run the app
+   > `python app.py`
+
+
+
+
 # Other bits
 
 ## Features to add
