@@ -47,8 +47,9 @@ elif (db_type=="mysql"):
                 password=db_pass,
                 database=db_name,
                 query={
-                    "unix_socket": "/cloudsql/{}".format(cloud_sql_connection_name)},
+                    "unix_socket": "/cloudsql/{}".format(cloud_sql_connection_name),
                     "charset":"utfmb4"
+                }
             ),
             pool_size=5,
             max_overflow=2,
