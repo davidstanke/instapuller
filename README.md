@@ -5,7 +5,7 @@ _Note that storing data in Cloud SQL isn't a truly serverless data solution._
 
 ## Setup
 
-> 🥧 This looks like a lot of setup, but **it will only take about 5 minutes.** It's just a bunch of copy-and-paste scripts to run in cloud shell. 🍰
+> 🥧 This looks like a lot of setup, but **it should only take about 5 minutes.** It's just a bunch of copy-and-paste scripts to run in cloud shell. 🍰
 
 You can run these steps from any terminal that has gcloud and docker, but the easiest way is to **run all the following commands in cloud shell**. You'll need a GitHub.com personal account. *Recommended: create a new GCP project before proceeding.*
 
