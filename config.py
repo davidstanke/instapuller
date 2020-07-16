@@ -29,7 +29,8 @@ elif (db_type=="mysql"):
                 username=db_user,
                 password=db_pass,
                 database=db_name,
-                host=db_host
+                host=db_host,
+                query={"charset":"utf8mb4"}
             ),
             pool_size=5,
             max_overflow=2,
@@ -47,6 +48,7 @@ elif (db_type=="mysql"):
                 database=db_name,
                 query={
                     "unix_socket": "/cloudsql/{}".format(cloud_sql_connection_name)},
+                    "charset":"utfmb4"
             ),
             pool_size=5,
             max_overflow=2,
