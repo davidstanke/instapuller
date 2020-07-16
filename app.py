@@ -141,7 +141,7 @@ def get_usernames():
 def purge_all():
     session = Session()
     posts = session.query(Post).delete()
-    media = session.query(Post).delete()
+    media = session.query(Media).delete()
     session.commit()
     flash('All gone! Deleted ' + str(posts) + ' posts and ' + str(media) + ' media entries.')
     return redirect(url_for('displayPosts'))

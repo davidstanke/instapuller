@@ -51,6 +51,17 @@
             background-color: #90ee90;
         }
 
+		.nuke {
+			float:right;
+			font-size:1.25rem;
+			padding:.15rem;
+			height:2rem;
+			width:2rem;
+			border:1px solid #999;
+			background-color: #eee;
+			border-radius:.25em;
+		}
+
 	</style>
 </head>
 
@@ -68,6 +79,7 @@
     {% endif %}
     {% endwith %}
 	<header>
+		<div class="nuke"><a href="/purgeall" onClick="return confirm('Are you sure? This action will delete all records');">💣</a></div>
 		<a href="/" class="title">Instapuller</a> is an application that displays instagram posts from <a href="/usernames">selected users</a>.<br>
 		<form action="/addUser" method="GET">
 			<input type="text" name="username" placeholder="add an instagrammer" required><input type="submit" value="go">
