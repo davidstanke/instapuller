@@ -17,7 +17,7 @@ Do the following, then whenever there's a pull request against branch `staging`,
 #### Run these commands:
 
 ```bash
-gcloud sql databases create instapuller-preview --instance=instapuller
+gcloud sql databases create instapuller-preview --instance=instapuller --charset=utf8mb4
 
 gcloud run deploy instapuller-preview --image=gcr.io/$PROJECT/instapuller --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-preview,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
 

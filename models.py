@@ -15,7 +15,6 @@ class Post (Base):
     display_url = Column(Unicode(2047))
     thumbnail_src = Column(Unicode(2047))
     date_added = Column(DateTime, server_default=func.now())
-    mysql_charset='utf8mb4'
 
 class Media (Base):
     __tablename__ = "media"
@@ -23,4 +22,3 @@ class Media (Base):
     display_url = Column(Unicode(2047))
     path = Column(Unicode(2047))
     date_added = Column(DateTime, server_default=func.now())
-    mysql_charset='utf8mb4'
