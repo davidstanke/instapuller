@@ -14,7 +14,7 @@ Do the following, then whenever there's a pull request against branch `staging`,
   gcloud secrets add-iam-policy-binding github_token --member serviceAccount:${GCB_SERVICE_ACCT} --role roles/secretmanager.secretAccessor
   ```
 
-#### Run these commands:
+#### Configure preview environment and build:
 
 ```bash
 gcloud sql databases create instapuller-preview --instance=instapuller --charset=utf8mb4
