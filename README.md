@@ -5,58 +5,50 @@ _Note that storing data in Cloud SQL isn't a truly serverless data solution._
 
 ## Setup
 
-> 🥧 This looks like a lot of setup, but **it will only take about 5 minutes.** It's just a bunch of copy-and-paste scripts to run in cloud shell. 🍰
+> 🥧 This looks like a lot of setup, but **it should only take about 5 minutes.** It's just a bunch of copy-and-paste scripts to run in cloud shell. 🍰
 
 You can run these steps from any terminal that has gcloud and docker, but the easiest way is to **run all the following commands in cloud shell**. You'll need a GitHub.com personal account. *Recommended: create a new GCP project before proceeding.*
 
-#### Set some convenience vars
-```bash
-export PROJECT=$(gcloud config list --format 'value(core.project)')
-export PROJECT_NUMBER=$(gcloud projects list --filter="$PROJECT" --format="value(PROJECT_NUMBER)")
-export GCB_SERVICE_ACCT="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
-export RUN_SERVICE_ACCT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
-
-```
-
-_Replace `<your_github_username>` with your account:_
+#### Prep
+_Replace `<your_github_username>` with your account (e.g. `davidstanke`):_
 ```bash
 export GITHUB_USER=<your_github_username>
 
 ```
 
 #### Duplicate repo
-**Don't clone this repo** directly; instead, click "Use this template" to make a copy (or [click here](https://github.com/davidstanke/instapuller/generate)). Call it `instapuller`, and *check the box to 'include all branches.'* Then clone your copy of the repo:
+**Don't clone this repo** directly; instead, click "Use this template" to make a copy (or [click here](https://github.com/davidstanke/instapuller/generate)). Call it `instapuller`. Then clone your copy of the repo, and add a "staging" branch:
 ```bash
 git clone https://github.com/${GITHUB_USER}/instapuller && cd instapuller
+git checkout -b staging
+git push -u origin staging
 
 ```
 
-#### Enable APIs and grant IAM permissions
+#### Set everything up...
 ```bash
-gcloud services enable cloudbuild.googleapis.com run.googleapis.com sqladmin.googleapis.com
+# set some convenience variables
+export PROJECT=$(gcloud config list --format 'value(core.project)')
+export PROJECT_NUMBER=$(gcloud projects list --filter="$PROJECT" --format="value(PROJECT_NUMBER)")
+export GCB_SERVICE_ACCT="${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com"
+export RUN_SERVICE_ACCT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+
+# Enable APIs and grant IAM permissions
+gcloud services enable cloudbuild.googleapis.com run.googleapis.com sqladmin.googleapis.com sql-component.googleapis.com
 gcloud projects add-iam-policy-binding $PROJECT --member=serviceAccount:$GCB_SERVICE_ACCT --role=roles/run.admin
 gcloud iam service-accounts add-iam-policy-binding $RUN_SERVICE_ACCT --member=serviceAccount:$GCB_SERVICE_ACCT --role=roles/iam.serviceAccountUser
 
-```
-
-#### Create CloudSQL databases
-```bash
+# Create CloudSQL databases
 export PASSWORD=$(openssl rand -base64 15)
 gcloud sql instances create instapuller --zone=us-central1-c --root-password=${PASSWORD}
 gcloud sql databases create instapuller-prod --instance=instapuller
 gcloud sql databases create instapuller-staging --instance=instapuller
 
-```
-
-#### Create initial application container
-```bash
+# Create initial application container
 docker build -t gcr.io/$PROJECT/instapuller .
 docker push gcr.io/$PROJECT/instapuller
 
-```
-
-#### Create Cloud Run services
-```bash
+# Create Cloud Run services
 gcloud run deploy instapuller-prod --image=gcr.io/$PROJECT/instapuller --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-prod,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
 
 gcloud run deploy instapuller-staging --image=gcr.io/$PROJECT/instapuller --region=us-central1 --platform=managed --allow-unauthenticated --set-env-vars=DB_USER=root,DB_PASS=${PASSWORD},DB_NAME=instapuller-staging,CLOUD_SQL_CONNECTION_NAME=$PROJECT:us-central1:instapuller --set-cloudsql-instances=$PROJECT:us-central1:instapuller
@@ -85,8 +77,8 @@ _For this, you'll use the [Cloud Build Triggers page](https://console.cloud.goog
 1. On the "create a push trigger" step, click **Skip for now** (we'll add the trigger via gcloud)
 
 ### Add triggers
-#### On commit to `main`, deploy to prod:
 ```bash
+# On commit to `main`, deploy to prod:
 gcloud beta builds triggers create github \
    --repo-name=instapuller \
    --repo-owner=${GITHUB_USER} \
@@ -94,11 +86,8 @@ gcloud beta builds triggers create github \
    --build-config="cloudbuild.yaml" \
    --description="On commit to main, deploy to prod service" \
    --substitutions="_DEPLOY_ENVIRONMENT=prod"
-   
-```
 
-#### On commit to `staging`, deploy to staging:
-```bash
+# On commit to `staging`, deploy to staging:
 gcloud beta builds triggers create github \
    --repo-name=instapuller \
    --repo-owner=${GITHUB_USER} \
