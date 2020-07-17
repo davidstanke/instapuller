@@ -22,7 +22,7 @@
 3. Create a root cloudsql dir
    > `sudo mkdir /cloudsql`
 4. Start the Cloud SQL Proxy
-   > `sudo ./cloud_sql_proxy -dir=/cloudsql -instances=serverless-ux-playground:us-central1:instapuller`
+   > `sudo ./cloud_sql_proxy -dir=/cloudsql -instances=$PROJECT:us-central1:instapuller`
 
 #### Run the Python app locally (different terminal from the SQL Proxy)
 

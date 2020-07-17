@@ -41,8 +41,8 @@ gcloud iam service-accounts add-iam-policy-binding $RUN_SERVICE_ACCT --member=se
 # Create CloudSQL databases
 export PASSWORD=$(openssl rand -base64 15)
 gcloud sql instances create instapuller --zone=us-central1-c --root-password=${PASSWORD}
-gcloud sql databases create instapuller-prod --instance=instapuller
-gcloud sql databases create instapuller-staging --instance=instapuller
+gcloud sql databases create instapuller-prod --instance=instapuller  --charset=utf8mb4
+gcloud sql databases create instapuller-staging --instance=instapuller --charset=utf8mb4
 
 # Create initial application container
 docker build -t gcr.io/$PROJECT/instapuller .

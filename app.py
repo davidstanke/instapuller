@@ -10,87 +10,76 @@ from bs4 import BeautifulSoup
 from flask import Flask, request, render_template, flash, redirect, url_for
 from google.cloud import pubsub_v1
 from sqlalchemy import create_engine, exc, Table, Column, Integer, String, MetaData, ForeignKey, Sequence, BigInteger, DATETIME, func
+from sqlalchemy.orm import sessionmaker
 from pymysql.err import IntegrityError
+
+# Classes for this application
+from models import Post, Media, Base
 
 # Setup Flask Web App
 app = Flask(__name__)
 app.secret_key = "replace_this_if_you_care"
 
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
+
 URL = 'http://imginn.com/'
+
+# make a session factory
+Session = sessionmaker(bind=config.db)
 
 # project_id = "serverless-ux-playground"
 # topic_name = "instapuller-media-download-request"
 # publisher = pubsub_v1.PublisherClient()
 # topic_path = publisher.topic_path(project_id, topic_name)
 
-futures = dict()  # What was this about?
-
-# This defines and will create the posts table if needed in the database
-metadata = MetaData()
-posts = Table('posts', metadata,
-              Column('username', String(255)),
-              Column('post_id', BigInteger, primary_key=True),
-              Column('shortcode', String(255)),
-              Column('direct_link', String(2047)),
-              Column('caption', String(8191)),
-              Column('display_url', String(2047)),
-              Column('thumbnail_src', String(2047)),
-              Column('date_added', DATETIME(timezone=True),
-                     server_default=func.now()),
-              mysql_charset='utf8mb4')
-
-media = Table('media', metadata,
-              Column('post_id', BigInteger, primary_key=True),
-              Column('display_url', String(255)),
-              Column('path', String(2047)),
-              Column('date_added', DATETIME(timezone=True),
-                     server_default=func.now()),
-              mysql_charset='utf8mb4')
-
-# NOTE: the following command doesn't work for sqlite. not sure why.
-# So, the database file ('misc/instapuller-local.db') has the tables already
-# in place.
-metadata.create_all(config.db)
-
 @app.route('/')
 def displayPosts():
-    with config.db.connect() as conn:
-        posts = conn.execute('''
-            select *
-            from posts
-            order by date_added DESC;''')
-        return render_template('index.html', data=posts)
+    session = Session()
+    posts = session.query(Post).order_by(Post.date_added.desc())
+    return render_template('index.html', data=posts)
 
 @app.route('/addUser')
 def processPosts():
     username = request.args.get('username')
-    if (username == None):
-        username = 'googlecloud'
-    headers = {'user-agent': 'my-app/0.0.1'}
-    page = requests.get(URL + username, headers=headers)
-    if (page.status_code == 200):
-        soup = BeautifulSoup(page.content, 'html.parser')
-        items = soup.find_all('div', class_='item')
-        collection = getPosts(items, username)
-        with config.db.connect() as conn:
-            for post in collection:
-                insert = posts.insert().values(post)
-                try:
-                    conn.execute(insert)  # If the insert succeeds
-                    # Dispatch media request to pubsub
-                    dispatchMediaDownloadRequest(post)
-                except exc.IntegrityError as err:
-                    print(err.orig)
 
-        return_string = (
-            "added Instgram user: " + username 
-            + " (" + str(len(collection)) + " items)")
+    if (username == None):
+        return_string = "dude, you gotta provide a username"
     else:
-        return_string = (
-            "Problem retrieving results: "
-            + URL + username + " returns "
-            + str(page.status_code) + " " + str(page.reason))
+        headers = {'user-agent': 'my-app/0.0.1'}
+        page = requests.get(URL + username, headers=headers)
+        
+        if (page.status_code == 200):
+            soup = BeautifulSoup(page.content, 'html.parser')
+            items = soup.find_all('div', class_='item')
+            collection = getPosts(items, username)
+
+            # commit to DB
+            session = Session()
+            for post in collection:
+                logger.debug(post.shortcode)
+                
+                # check if post id already exists
+                post_record = session.query(Post).filter(Post.post_id == post.post_id)
+                
+                if(post_record.count()):
+                    logger.info("post already exits: " + str(post.post_id))
+                else:
+                    session.add(post)
+        
+                # dispatchMediaDownloadRequest(post)
+                
+            session.commit()
+
+            return_string = (
+                "added Instgram user: " + username 
+                + " (" + str(len(collection)) + " items)")
+        else:
+            return_string = (
+                "Problem retrieving results: "
+                + URL + username + " returns "
+                + str(page.status_code) + " " + str(page.reason))
+
     flash(return_string)
     return redirect(url_for('displayPosts'))
 
@@ -112,56 +101,54 @@ def convertShortCodeToPostID(shortcode):
 def getPosts(postList, username):
     postCollection = []
     for post in postList:
-        item = {}
-        item["username"] = username
-        item["shortcode"] = post.find('a')['href'][3:-1]
-        item["direct_link"] = "https://www.instagram.com/p/" + \
-            item["shortcode"]
+        thisPost = Post()
+        thisPost.username = username
+        thisPost.shortcode = post.find('a')['href'][3:-1] 
+        thisPost.direct_link = "https://www.instagram.com/p/" + thisPost.shortcode
         try:
-            item["caption"] = post.find('img')["alt"]
+            thisPost.caption = post.find('img')["alt"]
         except:
-            item["caption"] = ""
-        item["display_url"] = post.find_all('a')[1]['href']
-        item["thumbnail_src"] = post.find('img')["data-src"]
-        item["post_id"] = convertShortCodeToPostID(item["shortcode"])
-        postCollection.append(item)
+            thisPost.caption = ""
+        thisPost.display_url = post.find_all('a')[1]['href']
+        thisPost.thumbnail_src = post.find('img')["data-src"]
+        thisPost.post_id = convertShortCodeToPostID(thisPost.shortcode)
+        postCollection.append(thisPost)
     return postCollection
 
 
 @app.route('/stats')
 def showStats():
-    with config.db.connect() as conn:
-        result = conn.execute('''
-            SELECT username, count(username) from posts
-                GROUP BY username
-                ORDER by count(username) desc;''')
+    session = Session()
+    result = session.query(Post.username, func.count(Post.post_id)).group_by(Post.username).all()
+    stats = []
 
-        tableRows = []
-        for row in result:
-            tableRows.append((row[0], row[1]))
+    for row in result:
+        stats.append((row[0], row[1]))
 
-        return render_template('stats.html', rows=tableRows)
+    return render_template('stats.html', rows=stats)
 
 
 @app.route('/usernames')
 def get_usernames():
-    with config.db.connect() as conn:
-        result = conn.execute('''
-            select username from posts
-                group by username
-                order by username;''')
-        users = []
-        for row in result:
-            users.append(row[0])
-        return json.dumps(users)
+    session = Session()
+    result = session.query(Post.username).group_by(Post.username).order_by(Post.username)
+    users = []
+    for row in result:
+        users.append(row[0])
+    return json.dumps(users)
 
 @app.route('/purgeall')
 def purge_all():
-    with config.db.connect() as conn:
-        conn.execute('delete from posts;')
-        conn.execute('delete from media;')
-    flash('all gone.')
+    session = Session()
+    posts = session.query(Post).delete()
+    media = session.query(Media).delete()
+    session.commit()
+    flash('All gone! Deleted ' + str(posts) + ' posts and ' + str(media) + ' media entries.')
     return redirect(url_for('displayPosts'))
     
 if __name__ == "__main__":
+
+    # create initial database tables (if not already present)
+    Base.metadata.create_all(config.db)
+
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
