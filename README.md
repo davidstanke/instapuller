@@ -25,6 +25,11 @@ git push -u origin staging
 
 ```
 
+> Alternative setup: you can use Artifact Registry instead of Container Registry:
+> * enable artifact registry API and create a registry
+> * configure docker (see "setup instructions") on [Artifact Registry UI](https://console.cloud.google.com/artifacts)
+> * replace all instances of `gcr.io/$PROJECT/instapuller` with your `*.pkg.dev` registry 
+
 #### Set everything up...
 ```bash
 # set some convenience variables
