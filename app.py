@@ -8,7 +8,7 @@ import random
 import time
 from bs4 import BeautifulSoup
 from flask import Flask, request, render_template, flash, redirect, url_for
-from google.cloud import pubsub_v1
+# from google.cloud import pubsub_v1
 from sqlalchemy import create_engine, exc, Table, Column, Integer, String, MetaData, ForeignKey, Sequence, BigInteger, DATETIME, func
 from sqlalchemy.orm import sessionmaker
 from pymysql.err import IntegrityError
