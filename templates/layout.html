@@ -16,6 +16,7 @@
 	<style>
 		body {
 			font-family:"Google Sans", sans-serif;
+			color:#333;
 			background-color: white;
             max-width:1024px;
             margin:auto;
@@ -51,6 +52,14 @@
         header.messages {
             background-color: #90ee90;
         }
+
+		header form {
+			margin:.5rem .5rem .5rem 3rem;
+		}
+
+		.title img {
+			max-height:3rem;
+		}
 
 		.nuke {
 			float:right;
@@ -88,7 +97,7 @@
     {% endwith %}
 	<header>
 		<div class="nuke"><a href="/purgeall" onClick="return confirm('Are you sure? This action will delete all records');">💣</a></div>
-		<a href="/" class="title">Instapuller</a> is an application that displays instagram posts from <a href="/usernames">selected users</a>.<br>
+		<a href="/" class="title"><img src="{{ url_for('static', filename='logo.png') }}"></a> is an application that displays instagram posts from <a href="/usernames">selected users</a>.<br>
 		<form action="/addUser" method="GET">
 			<input type="text" name="username" placeholder="add an instagrammer" required><input type="submit" value="go">
 		</form>
