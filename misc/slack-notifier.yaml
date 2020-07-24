@@ -1,0 +1,13 @@
+apiVersion: cloud-build-notifiers/v1
+kind: SlackNotifier
+metadata:
+  name: example-slack-notifier
+spec:
+  notification:
+    filter: build.status == Build.Status.SUCCESS
+    delivery:
+      webhookUrl:
+        secretRef: webhook-url
+  secrets:
+  - name: webhook-url
+    value: projects/instapuller-stanke-20200717a/secrets/slack_webhook_url/versions/latest
